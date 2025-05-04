@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ZyNotes</title>
+</head>
+<body>
+    <h1>Bienvenue sur ZyNotes !</h1>
+    <div>
+        <h2>Liste des tâches : </h2>
+        <ul>
+            {% for task in tasks %}
+            <li>
+                <label for="{{ loop.index }}">{{ task }}</label>
+                <form action="{{ url_for('delete_task', task_id=loop.index0)}}", method="post">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div>
+        <h2>Ajouter une nouvelle tâche : </h2>
+        <form method="POST" action="{{ url_for('add_task') }}">
+            <input type="text" id="newTask" name="newTask" required>
+            <button type="submit">Ajouter</button>
+        </form>
+    </div>
+</body>
+</html>
