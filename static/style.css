@@ -97,6 +97,29 @@ input[type="checkbox"]:checked + .task-content {
     text-decoration: line-through;
 }
 
+.filter-section {
+    display: inline-flex;              /* taille basée sur le contenu */
+    align-items: center;              /* alignement vertical */
+    gap: 8px;                         /* espace entre l’image et le texte */
+    padding: 6px 8px;                /* un peu d’espace intérieur */
+    border: 1px solid #3b3b3b;        /* bordure visible */
+    border-radius: 8px;               /* coins arrondis */
+    background-color: #f0f0f0;        /* couleur pastel douce */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);  /* ombre légère */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .filter-section:hover {
+    background-color: #d8d8d8;        /* effet au survol */
+  }
+  
+  .filter-icon {
+    width: 20px;
+    height: 20px;
+}
+  
+
 /* Styles responsifs */
 @media (max-width: 768px) {
     .task-manager {

@@ -16,11 +16,15 @@
     </div>
     <div class="task-manager">
         <h2>Liste des tâches : </h2>
+        <button class="filter-section" onclick="filterTasks(event)">
+            <img src="{{ url_for('static', filename='filter-icon.png')}}" alt="Filtrer" class="filter-icon">
+            <span>Filtrer</span>
+        </button>
         {% if tasks %}
-        <ul class="task-list">
+        <ul class="task-list" id="task-list">
             {% for task in tasks %}
             <li class="task-item">
-                <input type="checkbox" onchange="toggleDone({{ task.id }})" {% if task.done %}checked{% endif %}/>
+                <input type="checkbox" onchange="toggleDone({{ loop.index0 }})" {% if task.done %}checked{% endif %}/>
                 <div class="task-content">
                     <label for="{{ loop.index }}">{{ task.text }}</label>
                     <p class="task-date">Modifié le {{ task.date }}</p>
@@ -44,6 +48,18 @@
                 "Content-Type": "application/json"
             }
         })
+    }
+
+    function filterTasks(event) {
+        event.preventDefault(); // Évite le rechargement de page
+
+        fetch("/filter", {
+            method: "POST"
+        })
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById("task-list").innerHTML = html;
+        });
     }
 </script>
 </html>

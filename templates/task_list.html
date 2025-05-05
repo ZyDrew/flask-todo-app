@@ -1,0 +1,12 @@
+{% for task in tasks %}
+<li class="task-item">
+    <input type="checkbox" onchange="toggleDone({{ loop.index0 }})" {% if task.done %}checked{% endif %}/>
+    <div class="task-content">
+        <label for="{{ loop.index }}">{{ task.text }}</label>
+        <p class="task-date">Modifié le {{ task.date }}</p>
+    </div>
+    <form action="{{ url_for('delete_task', task_id=loop.index0)}}" method="post" style="display:inline;">
+        <button class="button-del" type="submit">Supprimer</button>
+    </form>
+</li>
+{% endfor %}
