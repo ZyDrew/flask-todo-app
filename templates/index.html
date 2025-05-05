@@ -3,29 +3,47 @@
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1" />
     <title>ZyNotes</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <h1>Bienvenue sur ZyNotes !</h1>
-    <div>
-        <h2>Liste des tâches : </h2>
-        <ul>
-            {% for task in tasks %}
-            <li>
-                <label for="{{ loop.index }}">{{ task }}</label>
-                <form action="{{ url_for('delete_task', task_id=loop.index0)}}", method="post">
-                    <button type="submit">Supprimer</button>
-                </form>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div>
+    <div class="task-manager">
         <h2>Ajouter une nouvelle tâche : </h2>
         <form method="POST" action="{{ url_for('add_task') }}">
             <input type="text" id="newTask" name="newTask" required>
             <button type="submit">Ajouter</button>
         </form>
     </div>
+    <div class="task-manager">
+        <h2>Liste des tâches : </h2>
+        {% if tasks %}
+        <ul class="task-list">
+            {% for task in tasks %}
+            <li class="task-item">
+                <input type="checkbox" onchange="toggleDone({{ task.id }})" {% if task.done %}checked{% endif %}/>
+                <div class="task-content">
+                    <label for="{{ loop.index }}">{{ task.text }}</label>
+                    <p class="task-date">Modifié le {{ task.date }}</p>
+                </div>
+                <form action="{{ url_for('delete_task', task_id=loop.index0)}}" method="post" style="display:inline;">
+                    <button class="button-del" type="submit">Supprimer</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p align="center">Vous n'avez plus de tâches pour aujourd'hui</p>
+        {% endif %}
+    </div>
 </body>
+<script>
+    function toggleDone(task_id) {
+        fetch(`/toggle/${task_id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+    }
+</script>
 </html>

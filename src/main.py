@@ -1,5 +1,5 @@
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
-from Task import Task
 from data import read_tasks_file, write_tasks_file
 import os
 
@@ -18,7 +18,8 @@ def home():
 
 @app.route("/add", methods=["POST"])
 def add_task():
-    new_task = Task(request.form.get("newTask"), "01-01-2025")
+    dt = datetime.now().strftime("%d-%m-%Y %H:%M")
+    new_task = {"id" : len(tasks), "text" : request.form.get("newTask"), "date" : dt, "done" : False}
     if new_task:
         tasks.append(new_task)
         write_tasks_file(tasks)
@@ -30,6 +31,15 @@ def delete_task(task_id):
         tasks.pop(task_id)
         write_tasks_file(tasks)
     return redirect(url_for("home"))
+
+@app.route("/toggle/<int:task_id>", methods=["POST"])
+def toggle_done(task_id):
+    for task in tasks:
+        if task["id"] == task_id:
+            task["done"] = not task["done"]
+    write_tasks_file(tasks)
+    return "", 204
+
 
 if __name__ == "__main__":
     app.run(debug=True)

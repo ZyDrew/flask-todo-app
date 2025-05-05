@@ -1,0 +1,113 @@
+/* Style général du gestionnaire de tâches */
+body {
+font-family: 'Arial', sans-serif;
+margin: 0;
+padding: 0;
+background-color: #f3f4f6;
+}
+
+/* Conteneur principal */
+.task-manager {
+max-width: 600px; /* Largeur maximale pour la responsivité */
+margin: 40px;
+padding: 20px;
+background-color: #ffffff; /* Couleur de fond blanche pour le conteneur */
+border-radius: 8px;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre légère */
+}
+
+/* Titre */
+h1 {
+font-size: 24px;
+color: #333; /* Couleur de texte sombre pour le contraste */
+text-align: center;
+}
+
+/* Liste des tâches */
+.task-list {
+list-style-type: none; /* Supprime les puces */
+padding: 0;
+}
+
+/* Style des éléments de tâche */
+.task-item {
+display: flex; /* Utiliser flexbox pour un alignement horizontal */
+justify-content: space-between;
+align-items: flex-start; /* aligne à gauche par défaut */
+padding: 10px;
+margin: 10px 0;
+background-color: #e9f6ff; /* Couleur pastel pour les éléments de tâche */
+border-radius: 5px; /* Bords arrondis */
+}
+
+.task-content {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+margin-left: 30px;
+}
+
+.task-date {
+font-size: 0.8em;       /* plus petit */
+margin: 5px 0 0 auto;   /* espace au-dessus et aligné à droite */
+color: #666;          /* optionnel : couleur plus discrète */
+}  
+
+.button-del {
+font-family: arial;
+color: #000000;
+font-size: 14px;
+padding: 3px 10px;
+border-radius: 10px;
+border: 2px solid #7A2B2B;
+background: #EEB5B5;
+}
+
+.button-del:hover {
+color: #000000;
+background: #EE8A8A;
+}
+  
+button {
+    font-family: arial;
+    color: #000000;
+    font-size: 14px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    border: 2px solid #1897f8;
+    background: #e7f0f7;
+    }
+    
+button:hover {
+color: #000000;
+background: #acd5f5;
+}
+
+input[type="checkbox"] {
+    position: absolute;
+    height: 15px;
+	width: 15px;
+	background: #94A3B8;
+	transition: background 250ms;
+	border: 1px solid #F1F5F9;
+	border-radius: 3px;
+}
+
+input[type="checkbox"]:checked + .task-content {
+    text-decoration: line-through;
+}
+
+/* Styles responsifs */
+@media (max-width: 768px) {
+    .task-manager {
+    padding: 15px;
+    }
+
+    h1 {
+    font-size: 20px;
+    }
+
+    .task-item {
+    flex-direction: column; /* Adapter pour écrans plus petits */
+    }
+}
