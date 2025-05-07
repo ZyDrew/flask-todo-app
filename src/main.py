@@ -10,8 +10,6 @@ app = Flask(__name__,
             template_folder=os.path.join(BASE_DIR, 'templates'),
             static_folder=os.path.join(BASE_DIR, 'static'))
 
-filter_state = True
-
 @app.route("/")
 def home():
     tasks = read_tasks_file()
@@ -20,11 +18,21 @@ def home():
 @app.route("/add", methods=["POST"])
 def add_task():
     dt = datetime.now().strftime("%d-%m-%Y %H:%M")
-    new_task = {"text" : request.form.get("newTask"), "date" : dt, "done" : False}
+    urgent = False if request.form.get("urgent") == None else True
+
+    new_task = {
+        "text" : request.form.get("newTask"),
+        "date" : dt,
+        "done" : False,
+        "urgent" : urgent,
+        "category" : request.form.get("category")
+    }
+
     if new_task["text"] != "":
         tasks = read_tasks_file()
         tasks.append(new_task)
         write_tasks_file(tasks)
+
     return redirect(url_for("home"))
 
 @app.route("/delete/<int:task_id>", methods=["POST"])
@@ -45,10 +53,27 @@ def toggle_done(task_id):
 
 @app.route("/filter", methods=["POST"])
 def filter_tasks():
-    global filter_state
+    filter_main = request.form.get("filter-main")
+    filter_order = request.form.get("filter-order")
     tasks = read_tasks_file()
-    sorted_tasks = sorted(tasks, key=lambda task: task["done"], reverse=filter_state)
-    filter_state = not filter_state
+
+    if filter_order == "asc":
+        filter_state = True
+    elif filter_order == "desc":
+        filter_state = False
+    else:
+        filter_state = False
+
+    match filter_main:
+        case "urgent":
+            sorted_tasks = sorted(tasks, key=lambda task: task["urgent"], reverse=filter_state)
+        case "category":
+            sorted_tasks = sorted(tasks, key=lambda task: task["category"], reverse=filter_state)
+        case "done":
+            sorted_tasks = sorted(tasks, key=lambda task: task["done"], reverse=filter_state)
+        case _:
+            sorted_tasks = sorted(tasks, key=lambda task: task["text"], reverse=filter_state)
+
     write_tasks_file(sorted_tasks)
     return render_template("task_list.html", tasks=sorted_tasks)
 

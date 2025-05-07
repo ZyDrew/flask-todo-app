@@ -4,6 +4,7 @@
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1" />
     <title>ZyNotes</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/script.js"></script>
 </head>
 <body>
     <h1>Bienvenue sur ZyNotes !</h1>
@@ -12,24 +13,67 @@
         <form method="POST" action="{{ url_for('add_task') }}">
             <input type="text" id="newTask" name="newTask" required>
             <button type="submit">Ajouter</button>
+            <div class="task-properties">
+                <input type="checkbox" id="urgent" name="urgent">
+                <span>Important</span>
+                <div class="cat-listbox">
+                    <label class="cat-listbox-header" for="category">Catégorie</label>
+                    <select name="category" id="category" class="cat-listbox-options">
+                        <option value="aucun">---</option>
+                        <option value="personnelle">Personnelle</option>
+                        <option value="maison">Maison</option>
+                        <option value="travail">Travail</option>
+                    </select>
+                </div>
+            </div>
         </form>
     </div>
     <div class="task-manager">
         <h2>Liste des tâches : </h2>
-        <button class="filter-section" onclick="filterTasks(event)">
-            <img src="{{ url_for('static', filename='filter-icon.png')}}" alt="Filtrer" class="filter-icon">
-            <span>Filtrer</span>
-        </button>
+        <div class="filter-section">
+            <button class="filter-button" id="filter-button">
+                <img src="{{ url_for('static', filename='filter-icon.png')}}" alt="Filtrer" class="filter-icon">
+                <span>Filtrer</span>
+            </button>
+        </div>
+        <form class="filter-popup hidden" id="filter-popup">
+            <div class="filter-popup-group">
+                <label><input type="radio" name="filter-main" id="filter-urgent" value="urgent">Important</label>
+                <label><input type="radio" name="filter-main" id="filter-category" value="category">Catégorie</label>
+                <label><input type="radio" name="filter-main" id="filter-done" value="done">Terminer</label>
+            </div>
+        
+            <div class="filter-popup-group">
+                <label><input type="radio" name="filter-order" id="filter-asc" value="asc">Croissant</label>
+                <label><input type="radio" name="filter-order" id="filter-desc" value="desc">Décroissant</label>
+            </div>
+        
+            <div class="filter-button-close">
+                <button type="submit" class="filter-button-apply" id="filter-button-apply">Appliquer</button>
+                <button type="button" class="filter-button-cancel" id="filter-button-cancel">Annuler</button>
+            </div>
+        </form>
         {% if tasks %}
         <ul class="task-list" id="task-list">
             {% for task in tasks %}
             <li class="task-item">
-                <input type="checkbox" onchange="toggleDone({{ loop.index0 }})" {% if task.done %}checked{% endif %}/>
+                <input type="checkbox" class="task-checkbox" onchange="toggleDone({{ loop.index0 }})" {% if task.done %}checked{% endif %}/>
                 <div class="task-content">
-                    <label for="{{ loop.index }}">{{ task.text }}</label>
+                    <div class="task-text">
+                        <label for="{{ loop.index }}">{{ task.text }}</label>
+                        {% if task.urgent %}
+                        <img src="{{ url_for('static', filename='urgent-icon.png')}}" alt="Priorities" class="prio-icon">
+                        {% endif %}
+                    </div>
+                    {% if task.category != "aucun" %}
+                    <div class="task-category">
+                        <img src="{{ url_for('static', filename='category-icon.png')}}" alt="Category" class="cat-img">
+                        <span>{{ task.category }}</span>
+                    </div>
+                    {% endif %}
                     <p class="task-date">Modifié le {{ task.date }}</p>
                 </div>
-                <form action="{{ url_for('delete_task', task_id=loop.index0)}}" method="post" style="display:inline;">
+                <form action="{{ url_for('delete_task', task_id=loop.index0)}}" method="post">
                     <button class="button-del" type="submit">Supprimer</button>
                 </form>
             </li>
@@ -40,26 +84,4 @@
         {% endif %}
     </div>
 </body>
-<script>
-    function toggleDone(task_id) {
-        fetch(`/toggle/${task_id}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-    }
-
-    function filterTasks(event) {
-        event.preventDefault(); // Évite le rechargement de page
-
-        fetch("/filter", {
-            method: "POST"
-        })
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById("task-list").innerHTML = html;
-        });
-    }
-</script>
 </html>

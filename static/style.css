@@ -32,10 +32,10 @@ padding: 0;
 /* Style des éléments de tâche */
 .task-item {
 display: flex; /* Utiliser flexbox pour un alignement horizontal */
-justify-content: space-between;
 align-items: flex-start; /* aligne à gauche par défaut */
 padding: 10px;
 margin: 10px 0;
+gap: 10px;
 background-color: #e9f6ff; /* Couleur pastel pour les éléments de tâche */
 border-radius: 5px; /* Bords arrondis */
 }
@@ -44,7 +44,20 @@ border-radius: 5px; /* Bords arrondis */
 display: flex;
 flex-direction: column;
 align-items: flex-start;
-margin-left: 30px;
+}
+
+.task-checkbox {
+    height: 15px;
+	width: 15px;
+	background: #94A3B8;
+	transition: background 250ms;
+	border: 1px solid #F1F5F9;
+	border-radius: 3px;
+    margin-top: 1px;
+}
+
+.task-checkbox:checked + .task-content {
+    text-decoration: line-through;
 }
 
 .task-date {
@@ -52,6 +65,30 @@ font-size: 0.8em;       /* plus petit */
 margin: 5px 0 0 auto;   /* espace au-dessus et aligné à droite */
 color: #666;          /* optionnel : couleur plus discrète */
 }  
+
+.prio-icon {
+    width: 15px;
+    height: 15px;
+}
+
+.task-text {
+    display: flex;
+}
+
+.task-category {
+    font-size: 0.95em;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.task-category img {
+    width: 15px;
+    height: 15px;
+}
+
+.task-item form {
+    margin-left: auto;
+}
 
 .button-del {
 font-family: arial;
@@ -83,21 +120,7 @@ color: #000000;
 background: #acd5f5;
 }
 
-input[type="checkbox"] {
-    position: absolute;
-    height: 15px;
-	width: 15px;
-	background: #94A3B8;
-	transition: background 250ms;
-	border: 1px solid #F1F5F9;
-	border-radius: 3px;
-}
-
-input[type="checkbox"]:checked + .task-content {
-    text-decoration: line-through;
-}
-
-.filter-section {
+.filter-button {
     display: inline-flex;              /* taille basée sur le contenu */
     align-items: center;              /* alignement vertical */
     gap: 8px;                         /* espace entre l’image et le texte */
@@ -108,17 +131,100 @@ input[type="checkbox"]:checked + .task-content {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);  /* ombre légère */
     cursor: pointer;
     transition: background-color 0.2s ease;
+    outline: none;
   }
   
-  .filter-section:hover {
+.filter-button:hover {
     background-color: #d8d8d8;        /* effet au survol */
-  }
+}
   
-  .filter-icon {
+.filter-icon {
     width: 20px;
     height: 20px;
 }
   
+.task-properties {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: sans-serif;
+}
+
+/* Style spécifique pour l'input avec l'id "urgent" */
+#urgent {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    margin-right: -10px;
+}
+
+/* Alignement et espacement du texte */
+.task-properties span {
+    font-size: 1rem;
+    color: #333;
+    margin-right: 16px;
+}
+
+/* Conteneur de la catégorie */
+.cat-listbox {
+    display: flex;
+    flex-direction: column;
+}
+
+.cat-listbox-header {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.cat-listbox-options {
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    color: #333;
+}
+
+.filter-section {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #e9f6ff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+.filter-popup-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.filter-button-close {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
 
 /* Styles responsifs */
 @media (max-width: 768px) {

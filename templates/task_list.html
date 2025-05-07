@@ -1,12 +1,23 @@
 {% for task in tasks %}
-<li class="task-item">
-    <input type="checkbox" onchange="toggleDone({{ loop.index0 }})" {% if task.done %}checked{% endif %}/>
-    <div class="task-content">
-        <label for="{{ loop.index }}">{{ task.text }}</label>
-        <p class="task-date">Modifié le {{ task.date }}</p>
-    </div>
-    <form action="{{ url_for('delete_task', task_id=loop.index0)}}" method="post" style="display:inline;">
-        <button class="button-del" type="submit">Supprimer</button>
-    </form>
-</li>
+    <li class="task-item">
+        <input type="checkbox" class="task-checkbox" onchange="toggleDone({{ loop.index0 }})" {% if task.done %}checked{% endif %}/>
+        <div class="task-content">
+            <div class="task-text">
+                <label for="{{ loop.index }}">{{ task.text }}</label>
+                {% if task.urgent %}
+                <img src="{{ url_for('static', filename='urgent-icon.png')}}" alt="Priorities" class="prio-icon">
+                {% endif %}
+            </div>
+            {% if task.category != "aucun" %}
+            <div class="task-category">
+                <img src="{{ url_for('static', filename='category-icon.png')}}" alt="Category" class="cat-img">
+                <span>{{ task.category }}</span>
+            </div>
+            {% endif %}
+            <p class="task-date">Modifié le {{ task.date }}</p>
+        </div>
+        <form action="{{ url_for('delete_task', task_id=loop.index0)}}" method="post" style="display:inline;">
+            <button class="button-del" type="submit">Supprimer</button>
+        </form>
+    </li>
 {% endfor %}
