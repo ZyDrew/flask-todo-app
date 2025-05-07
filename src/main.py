@@ -10,6 +10,8 @@ app = Flask(__name__,
             template_folder=os.path.join(BASE_DIR, 'templates'),
             static_folder=os.path.join(BASE_DIR, 'static'))
 
+filter_state = True
+
 @app.route("/")
 def home():
     tasks = read_tasks_file()
@@ -43,8 +45,10 @@ def toggle_done(task_id):
 
 @app.route("/filter", methods=["POST"])
 def filter_tasks():
+    global filter_state
     tasks = read_tasks_file()
-    sorted_tasks = sorted(tasks, key=lambda task: task["done"])
+    sorted_tasks = sorted(tasks, key=lambda task: task["done"], reverse=filter_state)
+    filter_state = not filter_state
     write_tasks_file(sorted_tasks)
     return render_template("task_list.html", tasks=sorted_tasks)
 
