@@ -3,9 +3,9 @@ from pathlib import Path
 import json
 
 script_path = Path(__file__).parent.parent
-json_path = script_path / "tasks.json"
+json_path = script_path / "src/data/users.json"
 
-def read_tasks_file():
+def read_users_file():
     if not os.path.exists(json_path):
         return []
     
@@ -17,6 +17,6 @@ def read_tasks_file():
             return []
 
 
-def write_tasks_file(tasks):
+def write_users_file(tasks):
     with open(json_path, "w", encoding="utf-8") as file:
         json.dump(tasks, file, indent=4)

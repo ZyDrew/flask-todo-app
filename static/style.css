@@ -18,32 +18,32 @@ box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre légère */
 
 /* Titre */
 h1 {
-font-size: 24px;
-color: #333; /* Couleur de texte sombre pour le contraste */
-text-align: center;
+    font-size: 24px;
+    color: #333; /* Couleur de texte sombre pour le contraste */
+    text-align: center;
 }
 
 /* Liste des tâches */
 .task-list {
-list-style-type: none; /* Supprime les puces */
-padding: 0;
+    list-style-type: none; /* Supprime les puces */
+    padding: 0;
 }
 
 /* Style des éléments de tâche */
 .task-item {
-display: flex; /* Utiliser flexbox pour un alignement horizontal */
-align-items: flex-start; /* aligne à gauche par défaut */
-padding: 10px;
-margin: 10px 0;
-gap: 10px;
-background-color: #e9f6ff; /* Couleur pastel pour les éléments de tâche */
-border-radius: 5px; /* Bords arrondis */
+    display: flex; /* Utiliser flexbox pour un alignement horizontal */
+    align-items: flex-start; /* aligne à gauche par défaut */
+    padding: 10px;
+    margin: 10px 0;
+    gap: 10px;
+    background-color: #e9f6ff; /* Couleur pastel pour les éléments de tâche */
+    border-radius: 5px; /* Bords arrondis */
 }
 
 .task-content {
-display: flex;
-flex-direction: column;
-align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .task-checkbox {
@@ -61,9 +61,9 @@ align-items: flex-start;
 }
 
 .task-date {
-font-size: 0.8em;       /* plus petit */
-margin: 5px 0 0 auto;   /* espace au-dessus et aligné à droite */
-color: #666;          /* optionnel : couleur plus discrète */
+    font-size: 0.8em;       /* plus petit */
+    margin: 5px 0 0 auto;   /* espace au-dessus et aligné à droite */
+    color: #666;          /* optionnel : couleur plus discrète */
 }  
 
 .prio-icon {
@@ -113,7 +113,7 @@ button {
     border-radius: 10px;
     border: 2px solid #1897f8;
     background: #e7f0f7;
-    }
+}
     
 button:hover {
 color: #000000;
@@ -132,7 +132,7 @@ background: #acd5f5;
     cursor: pointer;
     transition: background-color 0.2s ease;
     outline: none;
-  }
+}
   
 .filter-button:hover {
     background-color: #d8d8d8;        /* effet au survol */
@@ -192,26 +192,6 @@ background: #acd5f5;
     display: inline-block;
 }
 
-.filter-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #e9f6ff;
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.hidden {
-    display: none;
-}
-
 .filter-popup-group {
     display: flex;
     justify-content: center;
@@ -225,6 +205,52 @@ background: #acd5f5;
     margin-top: 10px;
 }
 
+/* Gestion formulaire inscription + connexion */
+.head-ruban {
+    display: flex;
+    justify-content: space-between;
+    max-height: 30px;
+    padding: 15px;
+    background-color: #ffffff; /* Couleur de fond blanche pour le conteneur */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre légère */
+}
+
+.head-ruban h1 {
+    left: 50%;
+    position: relative;
+    transform: translateX(-50%);
+    margin: 0;
+}
+
+.head-button {
+    justify-content: end;
+    gap: 10px;
+    outline: none;
+}
+
+.popup-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #e9f6ff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.popup-form:not(.hidden) {
+    display: flex;
+}
+
+.popup-form.hidden {
+    display: none;
+}
 
 /* Styles responsifs */
 @media (max-width: 768px) {
@@ -239,4 +265,23 @@ background: #acd5f5;
     .task-item {
     flex-direction: column; /* Adapter pour écrans plus petits */
     }
+}
+
+
+.hidden {
+    display: none;
+}
+
+.flash { 
+    padding: 10px; 
+    margin-bottom: 15px; 
+    border-radius: 4px; 
+}
+.error { 
+    background: #f8d7da; 
+    color: #721c24; 
+}
+.success { 
+    background: #d4edda; 
+    color: #155724; 
 }

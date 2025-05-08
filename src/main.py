@@ -1,6 +1,6 @@
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for
-from data import read_tasks_file, write_tasks_file
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from data import read_users_file, write_users_file
 import os
 
 # Définit le chemin absolu vers le dossier parent (où se trouvent templates/, static/, etc.)
@@ -9,11 +9,63 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 app = Flask(__name__,
             template_folder=os.path.join(BASE_DIR, 'templates'),
             static_folder=os.path.join(BASE_DIR, 'static'))
+app.secret_key = 'une_clé_secrète_pour_les_flashes'  # nécessaire
 
 @app.route("/")
 def home():
-    tasks = read_tasks_file()
-    return render_template("index.html", tasks=tasks)
+    users = read_users_file()
+    logstate, username, tasks = get_users_state(users)
+
+    return render_template("index.html", tasks=tasks, logstate=logstate, username=username)
+
+@app.route("/user_register", methods=["POST"])
+def user_register():
+    username = request.form.get("register-username")
+    password = request.form.get("register-password")
+
+    users = read_users_file()
+    for user in users:
+        if username == user["username"]:
+            flash("Nom d'utilisateur déjà existant", "error")
+            return render_template("index.html", register_username=username)
+
+    new_user = {
+        "username" : username,
+        "password" : password,
+        "tasks" : []
+    }
+
+    users.append(new_user)
+    write_users_file(users)
+
+    session["logged_in"] = True
+    session["username"] = username
+    
+    return redirect(url_for("home"))
+
+@app.route("/user_login", methods=["POST"])
+def user_login():
+    username = request.form.get("login-username")
+    password = request.form.get("login-password")
+
+    users = read_users_file()
+    user = check_user_loggin(users, username, password)
+
+    if user is None:
+        flash("Nom d'utilisateur ou mot de passe incorrect", "error")
+        return render_template("index.html", login_username=username, login_password=password)
+    
+    session["logged_in"] = True
+    session["username"] = username
+    
+    return redirect(url_for("home"))
+
+@app.route("/user_logout", methods=["POST"])
+def user_logout():
+    session["logged_in"] = None
+    session["username"] = None
+
+    return redirect(url_for("home"))
 
 @app.route("/add", methods=["POST"])
 def add_task():
@@ -29,33 +81,54 @@ def add_task():
     }
 
     if new_task["text"] != "":
-        tasks = read_tasks_file()
-        tasks.append(new_task)
-        write_tasks_file(tasks)
+        users = read_users_file()
+        username = session.get("username")
+        for user in users:
+            if user["username"] == username:
+                user["tasks"].append(new_task)
+                continue
+
+        write_users_file(users)
 
     return redirect(url_for("home"))
 
 @app.route("/delete/<int:task_id>", methods=["POST"])
 def delete_task(task_id):
-    tasks = read_tasks_file() 
-    if 0 <= task_id < len(tasks):
-        tasks.pop(task_id)
-        write_tasks_file(tasks)
+    users = read_users_file() 
+    username = session.get("username")
+    for user in users:
+        if user["username"] == username:
+            if 0 <= task_id < len(user["tasks"]):
+                user["tasks"].pop(task_id)
+                continue
+    
+    write_users_file(users)
     return redirect(url_for("home"))
 
 @app.route("/toggle/<int:task_id>", methods=["POST"])
 def toggle_done(task_id):
-    tasks = read_tasks_file()
-    if 0 <= task_id < len(tasks):
-        tasks[task_id]["done"] = not tasks[task_id]["done"]
-        write_tasks_file(tasks)
+    users = read_users_file() 
+    username = session.get("username")
+    for user in users:
+        if user["username"] == username:
+            if 0 <= task_id < len(user["tasks"]):
+                user["tasks"][task_id]["done"] = not user["tasks"][task_id]["done"]
+                continue
+    
+    write_users_file(users)
     return "", 204
 
 @app.route("/filter", methods=["POST"])
 def filter_tasks():
     filter_main = request.form.get("filter-main")
     filter_order = request.form.get("filter-order")
-    tasks = read_tasks_file()
+
+    users = read_users_file()
+    username = session.get("username")
+    for user in users:
+        if user["username"] == username:
+            tasks = user["tasks"]
+            continue
 
     if filter_order == "asc":
         filter_state = True
@@ -74,8 +147,42 @@ def filter_tasks():
         case _:
             sorted_tasks = sorted(tasks, key=lambda task: task["text"], reverse=filter_state)
 
-    write_tasks_file(sorted_tasks)
+    for user in users:
+        if user["username"] == username:
+            user["tasks"] = sorted_tasks
+            continue
+
+    write_users_file(users)
     return render_template("task_list.html", tasks=sorted_tasks)
+
+def get_tasks():
+    users = read_users_file()
+    username = session.get("username")
+    for user in users:
+        if user["username"] == username:
+            return user["tasks"]
+
+def get_users_state(users):
+    logstate = ""
+    username = ""
+    tasks = []
+
+    if session.get("logged_in"):
+        logstate = "hidden"
+        username = session.get("username")
+        for user in users:
+            if user["username"] == username:
+                tasks = user["tasks"]
+                continue
+
+    return logstate, username, tasks
+
+def check_user_loggin(users, username, password):
+    for user in users:
+        if user["username"] == username:
+            if user["password"] == password:
+                return user
+    return None
 
 if __name__ == "__main__":
     app.run(debug=True)

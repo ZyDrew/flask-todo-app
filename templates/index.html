@@ -7,7 +7,46 @@
     <script src="/static/script.js"></script>
 </head>
 <body>
-    <h1>Bienvenue sur ZyNotes !</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div class="head-ruban">
+        <h1>ZyNotes</h1>
+        <div class="head-button">
+            <button class="register-button {{ logstate }}" id="register-button">S'inscrire</button>
+            <button class="login-button {{logstate }}" id="login-button">Connexion</button>
+            <form action="{{ url_for('user_logout') }}" method="post">
+                <button class="logout-button {% if logstate != 'hidden' %}hidden{% endif %}" id="logout-button">Déconnexion</button>
+            </form>
+        </div>
+    </div>
+    <form class="register-form popup-form hidden" id="register-form" action="{{ url_for('user_register')}}" method="post">
+        <h3>Inscription</h3>
+        <label>Nom d'utilisateur :</label>
+        <input type="text" id="register-username" name="register-username" required value="{{ register_username }}">
+        <label>Mot de passe :</label>
+        <input type="password" id="register-password" name="register-password" required>
+        <div class="register-button-close">
+            <button type="submit" class="register-button-valid" id="register-button-valid">Valider</button>
+            <button type="button" class="register-button-cancel" id="register-button-cancel">Annuler</button>
+        </div>
+    </form>
+    <form class="login-form popup-form hidden" id="login-form" action="{{ url_for('user_login')}}" method="post">
+        <h3>Connexion</h3>
+        <label>Nom d'utilisateur :</label>
+        <input type="text" id="login-username" name="login-username" required value="{{ login_username }}">
+        <label>Mot de passe :</label>
+        <input type="password" id="login-password" name="login-password" required value="{{ login_password }}">
+        <div class="login-button-close">
+            <button type="submit" class="login-button-valid" id="login-button-valid">Valider</button>
+            <button type="button" class="login-button-cancel" id="login-button-cancel">Annuler</button>
+        </div>
+    </form>
+    <h1>Bienvenue, {{ username }} !</h1>
     <div class="task-manager">
         <h2>Ajouter une nouvelle tâche : </h2>
         <form method="POST" action="{{ url_for('add_task') }}">
@@ -36,7 +75,7 @@
                 <span>Filtrer</span>
             </button>
         </div>
-        <form class="filter-popup hidden" id="filter-popup">
+        <form class="filter-popup popup-form hidden" id="filter-popup">
             <div class="filter-popup-group">
                 <label><input type="radio" name="filter-main" id="filter-urgent" value="urgent">Important</label>
                 <label><input type="radio" name="filter-main" id="filter-category" value="category">Catégorie</label>
