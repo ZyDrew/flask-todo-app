@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ZyNotes - Connexion</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="head-ruban">
+        <h1>ZyNotes</h1>
+    </div>
+    <form class="login-form {% if form_to_show == 'register' %}{% else %}hidden{% endif %}" id="register-form" action="{{ url_for('user_register')}}" method="post">
+        <h3>Inscription</h3>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="flash {{ category }}" id="flash-container-reg">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <label>Nom d'utilisateur :</label>
+        <input type="text" id="register-username" name="register-username" required value="{{ register_username }}">
+        <label>Mot de passe :</label>
+        <input type="password" id="register-password" name="register-password" required>
+        <div class="register-button-close">
+            <button type="submit" class="register-button-valid" id="register-button-valid">Valider</button>
+            <button type="button" class="register-button-login" id="register-button-login">Déjà inscrit ? Connectez-vous !</button>
+        </div>
+    </form>
+    <form class="login-form {% if form_to_show != 'register' %}{% else %}hidden{% endif %}" id="login-form" action="{{ url_for('user_login')}}" method="post">
+        <h3>Connexion</h3>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="flash {{ category }}" id="flash-container-log">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <label>Nom d'utilisateur :</label>
+        <input type="text" id="login-username" name="login-username" required value="{{ login_username }}">
+        <label>Mot de passe :</label>
+        <input type="password" id="login-password" name="login-password" required value="{{ login_password }}">
+        <div class="login-button-close">
+            <button type="submit" class="login-button-valid" id="login-button-valid">Valider</button>
+            <button type="button" class="login-button-register" id="login-button-register">Pas encore membre ?</button>
+        </div>
+    </form>
+    <script>
+        document.getElementById("login-button-register").addEventListener("click", () => {
+            const login_form = document.getElementById("login-form");
+            const register_form = document.getElementById("register-form");
+
+            login_form.classList.add("hidden");
+            register_form.classList.toggle("hidden");
+            document.getElementById("flash-container-reg")?.remove();
+            register_form.querySelectorAll("input").forEach(input => input.value = "");
+        });
+
+        document.getElementById("register-button-login").addEventListener("click", () => {
+            const login_form = document.getElementById("login-form");
+            const register_form = document.getElementById("register-form");
+
+            login_form.classList.toggle("hidden");
+            register_form.classList.add("hidden");
+            document.getElementById("flash-container-log")?.remove();
+            login_form.querySelectorAll("input").forEach(input => input.value = "");
+        });
+    </script>
+</body>
+</html>

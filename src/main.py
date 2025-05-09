@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from data import read_users_file, write_users_file
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 # Définit le chemin absolu vers le dossier parent (où se trouvent templates/, static/, etc.)
@@ -13,6 +14,9 @@ app.secret_key = 'une_clé_secrète_pour_les_flashes'  # nécessaire
 
 @app.route("/")
 def home():
+    if session.get("logged_in") is None:
+        return render_template("login.html")
+
     users = read_users_file()
     logstate, username, tasks = get_users_state(users)
 
@@ -27,11 +31,11 @@ def user_register():
     for user in users:
         if username == user["username"]:
             flash("Nom d'utilisateur déjà existant", "error")
-            return render_template("index.html", register_username=username)
+            return render_template("login.html", register_username=username, form_to_show="register")
 
     new_user = {
         "username" : username,
-        "password" : password,
+        "password" : generate_password_hash(password),
         "tasks" : []
     }
 
@@ -52,8 +56,11 @@ def user_login():
     user = check_user_loggin(users, username, password)
 
     if user is None:
-        flash("Nom d'utilisateur ou mot de passe incorrect", "error")
-        return render_template("index.html", login_username=username, login_password=password)
+        flash("L'utilisateur n'existe pas, veuillez vous inscrire !", "error")
+        return render_template("login.html", login_username=username, login_password=password)
+    elif not user:
+        flash("Mot de passe incorrect !", "error")
+        return render_template("login.html", login_username=username, login_password=password)
     
     session["logged_in"] = True
     session["username"] = username
@@ -180,9 +187,12 @@ def get_users_state(users):
 def check_user_loggin(users, username, password):
     for user in users:
         if user["username"] == username:
-            if user["password"] == password:
+            if check_password_hash(user["password"], password):
                 return user
+            else:
+                return False
     return None
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
